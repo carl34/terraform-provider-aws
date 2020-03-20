@@ -31,6 +31,7 @@ In addition to all arguments above, the following attributes are exported:
 * `arn` - Amazon Resource Name (ARN) of the MSK cluster.
 * `bootstrap_brokers` - A comma separated list of one or more hostname:port pairs of Kafka brokers suitable to boostrap connectivity to the Kafka cluster.
 * `bootstrap_brokers_tls` - A comma separated list of one or more DNS names (or IPs) and TLS port pairs kafka brokers suitable to boostrap connectivity to the kafka cluster.
+* `broker_client_vpc_ip_addresses` - A comma separated list containing the Client VPC IP Address for each Kafka broker in a cluster.
 * `kafka_version` - Apache Kafka version.
 * `number_of_broker_nodes` - Number of broker nodes in the cluster.
 * `tags` - Map of key-value pairs assigned to the cluster.
