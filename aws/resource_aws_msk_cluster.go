@@ -3,7 +3,6 @@ package aws
 import (
 	"fmt"
 	"log"
-	"strings"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -37,8 +36,10 @@ func resourceAwsMskCluster() *schema.Resource {
 				Computed: true,
 			},
 			"broker_client_vpc_ip_addresses": {
-				Type:     schema.TypeString,
+				Type:     schema.TypeSet,
 				Computed: true,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+				Set:      schema.HashString,
 			},
 			"broker_node_group_info": {
 				Type:     schema.TypeList,
@@ -919,20 +920,16 @@ func flattenMskEncryptionInTransit(eit *kafka.EncryptionInTransit) []map[string]
 	return []map[string]interface{}{m}
 }
 
-func flattenMskNodeInfoListBrokerIpAddresses(l *kafka.ListNodesOutput) string {
-	if l == nil {
-		return ""
-	}
+func flattenMskNodeInfoListBrokerIpAddresses(l *kafka.ListNodesOutput) *schema.Set {
+	ips := []interface{}{}
 
-	var ips []string
-
-	for i, v := range l.NodeInfoList {
-		if l.NodeInfoList[i].BrokerNodeInfo != nil {
+	if l != nil {
+		for _, v := range l.NodeInfoList {
 			ips = append(ips, aws.StringValue(v.BrokerNodeInfo.ClientVpcIpAddress))
 		}
 	}
 
-	return strings.Join(ips, ",")
+	return schema.NewSet(schema.HashString, ips)
 }
 
 func flattenMskTls(tls *kafka.Tls) []map[string]interface{} {
