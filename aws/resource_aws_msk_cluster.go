@@ -444,7 +444,7 @@ func resourceAwsMskClusterRead(d *schema.ResourceData, meta interface{}) error {
 		ClusterArn: aws.String(d.Id()),
 	})
 	if err != nil {
-		return fmt.Errorf("failed requesting list nodes info for %q : %s", d.Id(), err)
+		return fmt.Errorf("failed requesting list nodes info for %q : %w", d.Id(), err)
 	}
 
 	cluster := out.ClusterInfo
@@ -454,7 +454,7 @@ func resourceAwsMskClusterRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("bootstrap_brokers_tls", aws.StringValue(brokerOut.BootstrapBrokerStringTls))
 
 	if err := d.Set("broker_client_vpc_ip_addresses", flattenMskNodeInfoListBrokerIpAddresses(nodesOut)); err != nil {
-		return fmt.Errorf("error setting broker_client_vpc_ip_addresses: %s", err)
+		return fmt.Errorf("error setting broker_client_vpc_ip_addresses: %w", err)
 	}
 
 	if err := d.Set("broker_node_group_info", flattenMskBrokerNodeGroupInfo(cluster.BrokerNodeGroupInfo)); err != nil {

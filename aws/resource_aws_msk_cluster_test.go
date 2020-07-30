@@ -104,9 +104,8 @@ func TestAccAWSMskCluster_basic(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateVerifyIgnore: []string{
-					"bootstrap_brokers",              // API may mutate ordering and selection of brokers to return
-					"bootstrap_brokers_tls",          // API may mutate ordering and selection of brokers to return
-					"broker_client_vpc_ip_addresses", // API may mutate ordering and selection of brokers to return
+					"bootstrap_brokers",     // API may mutate ordering and selection of brokers to return
+					"bootstrap_brokers_tls", // API may mutate ordering and selection of brokers to return
 				},
 			},
 		},
@@ -136,9 +135,8 @@ func TestAccAWSMskCluster_BrokerNodeGroupInfo_EbsVolumeSize(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateVerifyIgnore: []string{
-					"bootstrap_brokers",              // API may mutate ordering and selection of brokers to return
-					"bootstrap_brokers_tls",          // API may mutate ordering and selection of brokers to return
-					"broker_client_vpc_ip_addresses", // API may mutate ordering and selection of brokers to return
+					"bootstrap_brokers",     // API may mutate ordering and selection of brokers to return
+					"bootstrap_brokers_tls", // API may mutate ordering and selection of brokers to return
 				},
 			},
 			{
@@ -216,9 +214,8 @@ func TestAccAWSMskCluster_ConfigurationInfo_Revision(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateVerifyIgnore: []string{
-					"bootstrap_brokers",              // API may mutate ordering and selection of brokers to return
-					"bootstrap_brokers_tls",          // API may mutate ordering and selection of brokers to return
-					"broker_client_vpc_ip_addresses", // API may mutate ordering and selection of brokers to return
+					"bootstrap_brokers",     // API may mutate ordering and selection of brokers to return
+					"bootstrap_brokers_tls", // API may mutate ordering and selection of brokers to return
 				},
 			},
 			{
@@ -257,9 +254,8 @@ func TestAccAWSMskCluster_EncryptionInfo_EncryptionAtRestKmsKeyArn(t *testing.T)
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateVerifyIgnore: []string{
-					"bootstrap_brokers",              // API may mutate ordering and selection of brokers to return
-					"bootstrap_brokers_tls",          // API may mutate ordering and selection of brokers to return
-					"broker_client_vpc_ip_addresses", // API may mutate ordering and selection of brokers to return
+					"bootstrap_brokers",     // API may mutate ordering and selection of brokers to return
+					"bootstrap_brokers_tls", // API may mutate ordering and selection of brokers to return
 				},
 			},
 		},
@@ -290,9 +286,8 @@ func TestAccAWSMskCluster_EncryptionInfo_EncryptionInTransit_ClientBroker(t *tes
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateVerifyIgnore: []string{
-					"bootstrap_brokers",              // API may mutate ordering and selection of brokers to return
-					"bootstrap_brokers_tls",          // API may mutate ordering and selection of brokers to return
-					"broker_client_vpc_ip_addresses", // API may mutate ordering and selection of brokers to return
+					"bootstrap_brokers",     // API may mutate ordering and selection of brokers to return
+					"bootstrap_brokers_tls", // API may mutate ordering and selection of brokers to return
 				},
 			},
 		},
@@ -323,9 +318,8 @@ func TestAccAWSMskCluster_EncryptionInfo_EncryptionInTransit_InCluster(t *testin
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateVerifyIgnore: []string{
-					"bootstrap_brokers",              // API may mutate ordering and selection of brokers to return
-					"bootstrap_brokers_tls",          // API may mutate ordering and selection of brokers to return
-					"broker_client_vpc_ip_addresses", // API may mutate ordering and selection of brokers to return
+					"bootstrap_brokers",     // API may mutate ordering and selection of brokers to return
+					"bootstrap_brokers_tls", // API may mutate ordering and selection of brokers to return
 				},
 			},
 		},
@@ -354,9 +348,8 @@ func TestAccAWSMskCluster_EnhancedMonitoring(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateVerifyIgnore: []string{
-					"bootstrap_brokers",              // API may mutate ordering and selection of brokers to return
-					"bootstrap_brokers_tls",          // API may mutate ordering and selection of brokers to return
-					"broker_client_vpc_ip_addresses", // API may mutate ordering and selection of brokers to return
+					"bootstrap_brokers",     // API may mutate ordering and selection of brokers to return
+					"bootstrap_brokers_tls", // API may mutate ordering and selection of brokers to return
 				},
 			},
 			{
@@ -401,9 +394,8 @@ func TestAccAWSMskCluster_NumberOfBrokerNodes(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateVerifyIgnore: []string{
-					"bootstrap_brokers",              // API may mutate ordering and selection of brokers to return
-					"bootstrap_brokers_tls",          // API may mutate ordering and selection of brokers to return
-					"broker_client_vpc_ip_addresses", // API may mutate ordering and selection of brokers to return
+					"bootstrap_brokers",     // API may mutate ordering and selection of brokers to return
+					"bootstrap_brokers_tls", // API may mutate ordering and selection of brokers to return
 				},
 			},
 			{
@@ -427,9 +419,8 @@ func TestAccAWSMskCluster_NumberOfBrokerNodes(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateVerifyIgnore: []string{
-					"bootstrap_brokers",              // API may mutate ordering and selection of brokers to return
-					"bootstrap_brokers_tls",          // API may mutate ordering and selection of brokers to return
-					"broker_client_vpc_ip_addresses", // API may mutate ordering and selection of brokers to return
+					"bootstrap_brokers",     // API may mutate ordering and selection of brokers to return
+					"bootstrap_brokers_tls", // API may mutate ordering and selection of brokers to return
 				},
 			},
 			{
@@ -470,9 +461,8 @@ func TestAccAWSMskCluster_OpenMonitoring(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateVerifyIgnore: []string{
-					"bootstrap_brokers",              // API may mutate ordering and selection of brokers to return
-					"bootstrap_brokers_tls",          // API may mutate ordering and selection of brokers to return
-					"broker_client_vpc_ip_addresses", // API may mutate ordering and selection of brokers to return
+					"bootstrap_brokers",     // API may mutate ordering and selection of brokers to return
+					"bootstrap_brokers_tls", // API may mutate ordering and selection of brokers to return
 				},
 			},
 			{
@@ -521,9 +511,8 @@ func TestAccAWSMskCluster_LoggingInfo(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateVerifyIgnore: []string{
-					"bootstrap_brokers",              // API may mutate ordering and selection of brokers to return
-					"bootstrap_brokers_tls",          // API may mutate ordering and selection of brokers to return
-					"broker_client_vpc_ip_addresses", // API may mutate ordering and selection of brokers to return
+					"bootstrap_brokers",     // API may mutate ordering and selection of brokers to return
+					"bootstrap_brokers_tls", // API may mutate ordering and selection of brokers to return
 				},
 			},
 			{
@@ -578,9 +567,8 @@ func TestAccAWSMskCluster_Tags(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateVerifyIgnore: []string{
-					"bootstrap_brokers",              // API may mutate ordering and selection of brokers to return
-					"bootstrap_brokers_tls",          // API may mutate ordering and selection of brokers to return
-					"broker_client_vpc_ip_addresses", // API may mutate ordering and selection of brokers to return
+					"bootstrap_brokers",     // API may mutate ordering and selection of brokers to return
+					"bootstrap_brokers_tls", // API may mutate ordering and selection of brokers to return
 				},
 			},
 		},
