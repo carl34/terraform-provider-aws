@@ -160,7 +160,7 @@ output "bootstrap_brokers_tls" {
   value       = aws_msk_cluster.example.bootstrap_brokers_tls
 }
 
-output "broker_client_vpc_ip_address" {
+output "broker_client_vpc_ip_addresses" {
   description = "Broker IP Addresses"
   value       = "${aws_msk_cluster.example.broker_client_vpc_ip_addresses}"
 }
