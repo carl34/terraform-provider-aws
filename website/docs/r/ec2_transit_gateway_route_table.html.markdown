@@ -14,7 +14,7 @@ Manages an EC2 Transit Gateway Route Table.
 
 ```hcl
 resource "aws_ec2_transit_gateway_route_table" "example" {
-  transit_gateway_id = "${aws_ec2_transit_gateway.example.id}"
+  transit_gateway_id = aws_ec2_transit_gateway.example.id
 }
 ```
 
@@ -25,7 +25,7 @@ The following arguments are supported:
 * `transit_gateway_id` - (Required) Identifier of EC2 Transit Gateway.
 * `tags` - (Optional) Key-value tags for the EC2 Transit Gateway Route Table.
 
-## Attribute Reference
+## Attributes Reference
 
 In addition to all arguments above, the following attributes are exported:
 

@@ -20,10 +20,10 @@ Additional information for using AWS Directory Service with Windows File Systems
 
 ```hcl
 resource "aws_fsx_windows_file_system" "example" {
-  active_directory_id = "${aws_directory_service_directory.example.id}"
-  kms_key_id          = "${aws_kms_key.example.arn}"
+  active_directory_id = aws_directory_service_directory.example.id
+  kms_key_id          = aws_kms_key.example.arn
   storage_capacity    = 300
-  subnet_ids          = ["${aws_subnet.example.id}"]
+  subnet_ids          = [aws_subnet.example.id]
   throughput_capacity = 1024
 }
 ```
@@ -34,9 +34,9 @@ Additional information for using AWS Directory Service with Windows File Systems
 
 ```hcl
 resource "aws_fsx_windows_file_system" "example" {
-  kms_key_id          = "${aws_kms_key.example.arn}"
+  kms_key_id          = aws_kms_key.example.arn
   storage_capacity    = 300
-  subnet_ids          = ["${aws_subnet.example.id}"]
+  subnet_ids          = [aws_subnet.example.id]
   throughput_capacity = 1024
 
   self_managed_active_directory {
@@ -56,7 +56,7 @@ The following arguments are supported:
 * `subnet_ids` - (Required) A list of IDs for the subnets that the file system will be accessible from. To specify more than a single subnet set `deployment_type` to `MULTI_AZ_1`.
 * `throughput_capacity` - (Required) Throughput (megabytes per second) of the file system in power of 2 increments. Minimum of `8` and maximum of `2048`.
 * `active_directory_id` - (Optional) The ID for an existing Microsoft Active Directory instance that the file system should join when it's created. Cannot be specified with `self_managed_active_directory`.
-* `automatic_backup_retention_days` - (Optional) The number of days to retain automatic backups. Minimum of `0` and maximum of `35`. Defaults to `7`. Set to `0` to disable.
+* `automatic_backup_retention_days` - (Optional) The number of days to retain automatic backups. Minimum of `0` and maximum of `90`. Defaults to `7`. Set to `0` to disable.
 * `copy_tags_to_backups` - (Optional) A boolean flag indicating whether tags on the file system should be copied to backups. Defaults to `false`.
 * `daily_automatic_backup_start_time` - (Optional) The preferred time (in `HH:MM` format) to take daily automatic backups, in the UTC time zone.
 * `kms_key_id` - (Optional) ARN for the KMS Key to encrypt the file system at rest. Defaults to an AWS managed KMS Key.
@@ -114,11 +114,12 @@ Certain resource arguments, like `security_group_ids` and the `self_managed_acti
 ```hcl
 resource "aws_fsx_windows_file_system" "example" {
   # ... other configuration ...
-  security_group_ids = ["${aws_security_group.example.id}"]
+
+  security_group_ids = [aws_security_group.example.id]
 
   # There is no FSx API for reading security_group_ids
   lifecycle {
-    ignore_changes = ["security_group_ids"]
+    ignore_changes = [security_group_ids]
   }
 }
 ```

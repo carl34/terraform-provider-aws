@@ -8,9 +8,9 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/fsx"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/terraform-providers/terraform-provider-aws/aws/internal/keyvaluetags"
 )
 
@@ -48,7 +48,7 @@ func resourceAwsFsxWindowsFileSystem() *schema.Resource {
 				Type:         schema.TypeInt,
 				Optional:     true,
 				Default:      7,
-				ValidateFunc: validation.IntBetween(0, 35),
+				ValidateFunc: validation.IntBetween(0, 90),
 			},
 			"copy_tags_to_backups": {
 				Type:     schema.TypeBool,
