@@ -1,4 +1,17 @@
 rules:
+  - id: acceptance-test-naming-parent-disappears
+    languages: [go]
+    message: Prefer naming acceptance tests with _disappears_Parent suffix
+    paths:
+      include:
+        - 'aws/*_test.go'
+    patterns:
+      - pattern: func $FUNCNAME(t *testing.T) { ... }
+      - metavariable-regex:
+          metavariable: "$FUNCNAME"
+          regex: "^TestAcc[^_]+_([a-zA-Z]+[dD]isappears|[^_]+_disappears)$"
+    severity: WARNING
+
   - id: aws-sdk-go-multiple-service-imports
     languages: [go]
     message: Resources should not implement multiple AWS service functionality
@@ -8,6 +21,7 @@ rules:
         - aws/structure.go
         - aws/validators.go
         - aws/*wafregional*.go
+        - aws/resource_aws_serverlessapplicationrepository_cloudformation_stack.go
         - aws/*_test.go
         - aws/internal/keyvaluetags/
         - aws/internal/service/wafregional/
@@ -34,6 +48,97 @@ rules:
           metavariable: '$Y'
           regex: '^"github.com/aws/aws-sdk-go/service/[^/]+"$'
     severity: WARNING
+
+  - id: prefer-aws-go-sdk-pointer-conversion-assignment
+    languages: [go]
+    message: Prefer AWS Go SDK pointer conversion functions for dereferencing during assignment, e.g. aws.StringValue()
+    paths:
+      exclude:
+        - aws/cloudfront_distribution_configuration_structure.go
+        - aws/data_source_aws_route_table.go
+        - aws/opsworks_layers.go
+        - aws/resource*
+        - aws/structure.go
+        - aws/waf_helpers.go
+        - aws/internal/generators/
+        - aws/internal/keyvaluetags/
+        - awsproviderlint/vendor/
+      include:
+        - aws/
+    patterns:
+      - pattern: '$LHS = *$RHS'
+      - pattern-not: '*$LHS2 = *$RHS'
+    severity: WARNING
+
+  - id: prefer-aws-go-sdk-pointer-conversion-conditional
+    languages: [go]
+    message: Prefer AWS Go SDK pointer conversion functions for dereferencing during conditionals, e.g. aws.StringValue()
+    paths:
+      exclude:
+        - aws/cloudfront_distribution_configuration_structure.go
+        - aws/cloudfront_distribution_configuration_structure_test.go
+        - aws/config.go
+        - aws/data_source_aws_route*
+        - aws/ecs_task_definition_equivalency.go
+        - aws/opsworks_layers.go
+        - aws/resource*
+        - aws/structure.go
+        - aws/internal/generators/
+        - aws/internal/keyvaluetags/
+        - aws/internal/naming/
+        - awsproviderlint/vendor/
+      include:
+        - aws/
+    patterns:
+      - pattern-either:
+        - pattern: '$LHS == *$RHS'
+        - pattern: '$LHS != *$RHS'
+        - pattern: '$LHS > *$RHS'
+        - pattern: '$LHS < *$RHS'
+        - pattern: '$LHS >= *$RHS'
+        - pattern: '$LHS <= *$RHS'
+        - pattern: '*$LHS == $RHS'
+        - pattern: '*$LHS != $RHS'
+        - pattern: '*$LHS > $RHS'
+        - pattern: '*$LHS < $RHS'
+        - pattern: '*$LHS >= $RHS'
+        - pattern: '*$LHS <= $RHS'
+    severity: WARNING
+
+  - id: aws-go-sdk-pointer-conversion-ResourceData-SetId
+    fix: d.SetId(aws.StringValue($VALUE))
+    languages: [go]
+    message: Prefer AWS Go SDK pointer conversion aws.StringValue() function for dereferencing during d.SetId()
+    paths:
+      include:
+        - aws/
+    pattern: 'd.SetId(*$VALUE)'
+    severity: WARNING
+
+  - id: helper-schema-Set-extraneous-NewSet-with-flattenStringList
+    languages: [go]
+    message: Prefer `flattenStringSet()` function for casting a list of string pointers to a set
+    paths:
+      include:
+        - aws/
+    pattern: schema.NewSet(schema.HashString, flattenStringList($APIOBJECT))
+    severity: WARNING
+    
+  - id: helper-schema-Set-extraneous-expandStringList-with-List
+    languages: [go]
+    message: Prefer `expandStringSet()` function for casting a set to a list of string pointers
+    paths:
+      include:
+        - aws/
+    patterns:
+      - pattern-either:
+        - pattern: expandStringList($SET.List())
+        - pattern: |
+            $LIST := $SET.List()
+            ...
+            expandStringList($LIST)
+    severity: WARNING
+
 
   - id: helper-schema-ResourceData-GetOk-with-extraneous-conditional
     languages: [go]
@@ -92,4 +197,54 @@ rules:
           if tfresource.TimedOut($ERR) { ... }
           ...
           return ...
+    severity: WARNING
+
+  - id: is-not-found-error
+    languages: [go]
+    message: Check for resource.NotFoundError errors with tfresource.NotFound()
+    paths:
+      include:
+        - aws/
+    patterns:
+      - pattern-either:
+        - patterns:
+          - pattern: |
+              var $CAST *resource.NotFoundError
+              ...
+              errors.As($ERR, &$CAST)
+          - pattern-not-inside: |
+              var $CAST *resource.NotFoundError
+              ...
+              errors.As($ERR, &$CAST)
+              ...
+              $CAST.$FIELD
+        - patterns:
+          - pattern: |
+              $X, $Y := $ERR.(*resource.NotFoundError)
+    severity: WARNING
+
+  - id: time-equality
+    languages: [go]
+    message: Use time.Equal() instead of ==
+    paths:
+      include:
+        - aws/
+    patterns:
+      - pattern-either:
+        - pattern: |
+            aws.TimeValue($X) == $Y
+        - pattern: |
+            aws.TimeValue($X) != $Y
+        - pattern: |
+            ($X : time.Time) == $Y
+        - pattern: |
+            ($X : time.Time) != $Y
+        - pattern: |
+            $X == aws.TimeValue($Y)
+        - pattern: |
+            $X != aws.TimeValue($Y)
+        - pattern: |
+            $X == ($Y : time.Time)
+        - pattern: |
+            $X != ($Y : time.Time)
     severity: WARNING

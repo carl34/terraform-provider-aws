@@ -9,8 +9,8 @@ import (
 )
 
 func TestAccDataSourceAWSALBTargetGroup_basic(t *testing.T) {
-	lbName := fmt.Sprintf("testlb-%s", acctest.RandStringFromCharSet(13, acctest.CharSetAlphaNum))
-	targetGroupName := fmt.Sprintf("testtargetgroup-%s", acctest.RandStringFromCharSet(10, acctest.CharSetAlphaNum))
+	lbName := fmt.Sprintf("testlb-%s", acctest.RandString(13))
+	targetGroupName := fmt.Sprintf("testtargetgroup-%s", acctest.RandString(10))
 	resourceNameArn := "data.aws_lb_target_group.alb_tg_test_with_arn"
 	resourceName := "data.aws_lb_target_group.alb_tg_test_with_name"
 
@@ -26,6 +26,7 @@ func TestAccDataSourceAWSALBTargetGroup_basic(t *testing.T) {
 					resource.TestCheckResourceAttrSet(resourceNameArn, "arn_suffix"),
 					resource.TestCheckResourceAttr(resourceNameArn, "port", "8080"),
 					resource.TestCheckResourceAttr(resourceNameArn, "protocol", "HTTP"),
+					resource.TestCheckResourceAttr(resourceNameArn, "protocol_version", "HTTP1"),
 					resource.TestCheckResourceAttrSet(resourceNameArn, "vpc_id"),
 					resource.TestCheckResourceAttrSet(resourceNameArn, "load_balancing_algorithm_type"),
 					resource.TestCheckResourceAttr(resourceNameArn, "deregistration_delay", "300"),
@@ -69,8 +70,8 @@ func TestAccDataSourceAWSALBTargetGroup_basic(t *testing.T) {
 }
 
 func TestAccDataSourceAWSLBTargetGroup_BackwardsCompatibility(t *testing.T) {
-	lbName := fmt.Sprintf("testlb-%s", acctest.RandStringFromCharSet(13, acctest.CharSetAlphaNum))
-	targetGroupName := fmt.Sprintf("testtargetgroup-%s", acctest.RandStringFromCharSet(10, acctest.CharSetAlphaNum))
+	lbName := fmt.Sprintf("testlb-%s", acctest.RandString(13))
+	targetGroupName := fmt.Sprintf("testtargetgroup-%s", acctest.RandString(10))
 	resourceNameArn := "data.aws_alb_target_group.alb_tg_test_with_arn"
 	resourceName := "data.aws_alb_target_group.alb_tg_test_with_name"
 
@@ -178,7 +179,7 @@ resource "aws_lb_target_group" "test" {
 
 variable "subnets" {
   default = ["10.0.1.0/24", "10.0.2.0/24"]
-  type    = "list"
+  type    = list(string)
 }
 
 data "aws_availability_zones" "available" {
@@ -295,7 +296,7 @@ resource "aws_alb_target_group" "test" {
 
 variable "subnets" {
   default = ["10.0.1.0/24", "10.0.2.0/24"]
-  type    = "list"
+  type    = list(string)
 }
 
 data "aws_availability_zones" "available" {

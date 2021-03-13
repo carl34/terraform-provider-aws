@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 
@@ -922,7 +922,7 @@ func resourceAwsEMRClusterCreate(d *schema.ResourceData, meta interface{}) error
 		return fmt.Errorf("error running EMR Job Flow: %s", err)
 	}
 
-	d.SetId(*resp.JobFlowId)
+	d.SetId(aws.StringValue(resp.JobFlowId))
 	// This value can only be obtained through a deprecated function
 	d.Set("keep_job_flow_alive_when_no_steps", params.Instances.KeepJobFlowAliveWhenNoSteps)
 
@@ -978,6 +978,18 @@ func resourceAwsEMRClusterRead(d *schema.ResourceData, meta interface{}) error {
 
 	resp, err := emrconn.DescribeCluster(req)
 	if err != nil {
+		// After a Cluster has been terminated for an indeterminate period of time,
+		// the EMR API will return this type of error:
+		//   InvalidRequestException: Cluster id 'j-XXX' is not valid.
+		// If this causes issues with masking other legitimate request errors, the
+		// handling should be updated for deeper inspection of the special error type
+		// which includes an accurate error code:
+		//   ErrorCode: "NoSuchCluster",
+		if isAWSErr(err, emr.ErrCodeInvalidRequestException, "is not valid") {
+			log.Printf("[DEBUG] EMR Cluster (%s) not found", d.Id())
+			d.SetId("")
+			return nil
+		}
 		return fmt.Errorf("Error reading EMR cluster: %s", err)
 	}
 
@@ -1856,7 +1868,7 @@ func readHttpJson(url string, target interface{}) error {
 }
 
 func readLocalJson(localFile string, target interface{}) error {
-	file, e := ioutil.ReadFile(localFile)
+	file, e := os.ReadFile(localFile)
 	if e != nil {
 		log.Printf("[ERROR] %s", e)
 		return e

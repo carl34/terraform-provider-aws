@@ -288,8 +288,8 @@ resource "aws_cloudwatch_event_rule" "example" {
 
 -> **Note:** In order to be able to have your AWS Lambda function or
    SNS topic invoked by an EventBridge rule, you must setup the right permissions
-   using [`aws_lambda_permission`](https://www.terraform.io/docs/providers/aws/r/lambda_permission.html)
-   or [`aws_sns_topic.policy`](https://www.terraform.io/docs/providers/aws/r/sns_topic.html#policy).
+   using [`aws_lambda_permission`](/docs/providers/aws/r/lambda_permission.html)
+   or [`aws_sns_topic.policy`](/docs/providers/aws/r/sns_topic.html#policy).
    More info [here](https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/resource-based-policies-cwe.html).
 
 The following arguments are supported:
@@ -299,8 +299,7 @@ The following arguments are supported:
 * `target_id` - (Optional) The unique target assignment ID.  If missing, will generate a random, unique id.
 * `arn` - (Required) The Amazon Resource Name (ARN) associated of the target.
 * `input` - (Optional) Valid JSON text passed to the target. Conflicts with `input_path` and `input_transformer`.
-* `input_path` - (Optional) The value of the [JSONPath](http://goessner.net/articles/JsonPath/)
-	that is used for extracting part of the matched event when passing it to the target. Conflicts with `input` and `input_transformer`.
+* `input_path` - (Optional) The value of the [JSONPath](http://goessner.net/articles/JsonPath/) that is used for extracting part of the matched event when passing it to the target. Conflicts with `input` and `input_transformer`.
 * `role_arn` - (Optional) The Amazon Resource Name (ARN) of the IAM role to be used for this target when the rule is triggered. Required if `ecs_target` is used.
 * `run_command_targets` - (Optional) Parameters used when you are using the rule to invoke Amazon EC2 Run Command. Documented below. A maximum of 5 are allowed.
 * `ecs_target` - (Optional) Parameters used when you are using the rule to invoke Amazon ECS Task. Documented below. A maximum of 1 are allowed.
@@ -308,6 +307,8 @@ The following arguments are supported:
 * `kinesis_target` - (Optional) Parameters used when you are using the rule to invoke an Amazon Kinesis Stream. Documented below. A maximum of 1 are allowed.
 * `sqs_target` - (Optional) Parameters used when you are using the rule to invoke an Amazon SQS Queue. Documented below. A maximum of 1 are allowed.
 * `input_transformer` - (Optional) Parameters used when you are providing a custom input to a target based on certain event data. Conflicts with `input` and `input_path`.
+* `retry_policy` - (Optional)  Parameters used when you are providing retry policies. Documented below. A maximum of 1 are allowed.
+* `dead_letter_config` - (Optional)  Parameters used when you are providing a dead letter conifg. Documented below. A maximum of 1 are allowed.
 
 `run_command_targets` support the following:
 
@@ -354,6 +355,15 @@ For more information, see [Task Networking](https://docs.aws.amazon.com/AmazonEC
     * The keys can't start with "AWS".
 
 * `input_template` - (Required) Template to customize data sent to the target. Must be valid JSON. To send a string value, the string value must include double quotes. Values must be escaped for both JSON and Terraform, e.g. `"\"Your string goes here.\\nA new line.\""`
+
+`retry_policy` support the following:
+
+* `maximum_event_age_in_seconds` - (Optional) The age in seconds to continue to make retry attempts.
+* `maximum_retry_attempts` - (Optional) maximum number of retry attempts to make before the request fails
+
+`dead_letter_config` support the following:
+
+* `arn` - (Optional) - ARN of the SQS queue specified as the target for the dead-letter queue.
 
 ## Import
 

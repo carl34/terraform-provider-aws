@@ -114,7 +114,7 @@ The following arguments are supported:
     * `certificate_chain` - (Optional) The certificate's PEM-formatted chain
 * Creating a private CA issued certificate
     * `domain_name` - (Required) A domain name for which the certificate should be issued
-    * `certificate_authority_arn` - (Required) ARN of an ACMPCA
+    * `certificate_authority_arn` - (Required) ARN of an ACM PCA
     * `subject_alternative_names` - (Optional) Set of domains that should be SANs in the issued certificate. To remove all elements of a previously configured list, set this value equal to an empty list (`[]`) or use the [`terraform taint` command](https://www.terraform.io/docs/commands/taint.html) to trigger recreation.
 * `tags` - (Optional) A map of tags to assign to the resource.
 
@@ -142,7 +142,7 @@ Domain validation objects export the following attributes:
 * `resource_record_type` - The type of DNS record to create
 * `resource_record_value` - The value the DNS record needs to have
 
-[1]: /docs/configuration/resources.html#lifecycle
+[1]: https://www.terraform.io/docs/configuration/meta-arguments/lifecycle.html
 
 ## Import
 

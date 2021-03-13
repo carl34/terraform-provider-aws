@@ -11,7 +11,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/terraform-providers/terraform-provider-aws/aws/internal/tfawsresource"
 )
 
 func TestLBListenerARNFromRuleARN(t *testing.T) {
@@ -85,7 +84,7 @@ func TestAccAWSLBListenerRule_basic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "action.0.authenticate_cognito.#", "0"),
 					resource.TestCheckResourceAttr(resourceName, "action.0.authenticate_oidc.#", "0"),
 					resource.TestCheckResourceAttr(resourceName, "condition.#", "1"),
-					tfawsresource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
 						"host_header.#":           "0",
 						"http_header.#":           "0",
 						"http_request_method.#":   "0",
@@ -94,7 +93,7 @@ func TestAccAWSLBListenerRule_basic(t *testing.T) {
 						"query_string.#":          "0",
 						"source_ip.#":             "0",
 					}),
-					tfawsresource.TestCheckTypeSetElemAttr(resourceName, "condition.*.path_pattern.0.values.*", "/static/*"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "condition.*.path_pattern.0.values.*", "/static/*"),
 				),
 			},
 		},
@@ -210,7 +209,7 @@ func TestAccAWSLBListenerRule_BackwardsCompatibility(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "action.0.authenticate_cognito.#", "0"),
 					resource.TestCheckResourceAttr(resourceName, "action.0.authenticate_oidc.#", "0"),
 					resource.TestCheckResourceAttr(resourceName, "condition.#", "1"),
-					tfawsresource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
 						"host_header.#":           "0",
 						"http_header.#":           "0",
 						"http_request_method.#":   "0",
@@ -219,7 +218,7 @@ func TestAccAWSLBListenerRule_BackwardsCompatibility(t *testing.T) {
 						"query_string.#":          "0",
 						"source_ip.#":             "0",
 					}),
-					tfawsresource.TestCheckTypeSetElemAttr(resourceName, "condition.*.path_pattern.0.values.*", "/static/*"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "condition.*.path_pattern.0.values.*", "/static/*"),
 				),
 			},
 		},
@@ -657,7 +656,7 @@ func TestAccAWSLBListenerRule_conditionHostHeader(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "priority", "100"),
 					resource.TestCheckResourceAttr(resourceName, "action.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "condition.#", "1"),
-					tfawsresource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
 						"host_header.#":          "1",
 						"host_header.0.values.#": "2",
 						"http_header.#":          "0",
@@ -666,8 +665,8 @@ func TestAccAWSLBListenerRule_conditionHostHeader(t *testing.T) {
 						"query_string.#":         "0",
 						"source_ip.#":            "0",
 					}),
-					tfawsresource.TestCheckTypeSetElemAttr(resourceName, "condition.*.host_header.0.values.*", "example.com"),
-					tfawsresource.TestCheckTypeSetElemAttr(resourceName, "condition.*.host_header.0.values.*", "www.example.com"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "condition.*.host_header.0.values.*", "example.com"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "condition.*.host_header.0.values.*", "www.example.com"),
 				),
 			},
 		},
@@ -695,7 +694,7 @@ func TestAccAWSLBListenerRule_conditionHttpHeader(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "priority", "100"),
 					resource.TestCheckResourceAttr(resourceName, "action.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "condition.#", "2"),
-					tfawsresource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
 						"host_header.#":                  "0",
 						"http_header.#":                  "1",
 						"http_header.0.http_header_name": "X-Forwarded-For",
@@ -705,9 +704,9 @@ func TestAccAWSLBListenerRule_conditionHttpHeader(t *testing.T) {
 						"query_string.#":                 "0",
 						"source_ip.#":                    "0",
 					}),
-					tfawsresource.TestCheckTypeSetElemAttr(resourceName, "condition.*.http_header.0.values.*", "10.0.0.*"),
-					tfawsresource.TestCheckTypeSetElemAttr(resourceName, "condition.*.http_header.0.values.*", "192.168.1.*"),
-					tfawsresource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
+					resource.TestCheckTypeSetElemAttr(resourceName, "condition.*.http_header.0.values.*", "10.0.0.*"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "condition.*.http_header.0.values.*", "192.168.1.*"),
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
 						"host_header.#":                  "0",
 						"http_header.#":                  "1",
 						"http_header.0.http_header_name": "Zz9~|_^.-+*'&%$#!0aA",
@@ -717,7 +716,7 @@ func TestAccAWSLBListenerRule_conditionHttpHeader(t *testing.T) {
 						"query_string.#":                 "0",
 						"source_ip.#":                    "0",
 					}),
-					tfawsresource.TestCheckTypeSetElemAttr(resourceName, "condition.*.http_header.0.values.*", "RFC7230 Validity"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "condition.*.http_header.0.values.*", "RFC7230 Validity"),
 				),
 			},
 		},
@@ -759,7 +758,7 @@ func TestAccAWSLBListenerRule_conditionHttpRequestMethod(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "priority", "100"),
 					resource.TestCheckResourceAttr(resourceName, "action.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "condition.#", "1"),
-					tfawsresource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
 						"host_header.#":                  "0",
 						"http_header.#":                  "0",
 						"http_request_method.#":          "1",
@@ -768,8 +767,8 @@ func TestAccAWSLBListenerRule_conditionHttpRequestMethod(t *testing.T) {
 						"query_string.#":                 "0",
 						"source_ip.#":                    "0",
 					}),
-					tfawsresource.TestCheckTypeSetElemAttr(resourceName, "condition.*.http_request_method.0.values.*", "GET"),
-					tfawsresource.TestCheckTypeSetElemAttr(resourceName, "condition.*.http_request_method.0.values.*", "POST"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "condition.*.http_request_method.0.values.*", "GET"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "condition.*.http_request_method.0.values.*", "POST"),
 				),
 			},
 		},
@@ -797,7 +796,7 @@ func TestAccAWSLBListenerRule_conditionPathPattern(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "priority", "100"),
 					resource.TestCheckResourceAttr(resourceName, "action.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "condition.#", "1"),
-					tfawsresource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
 						"host_header.#":           "0",
 						"http_header.#":           "0",
 						"http_request_method.#":   "0",
@@ -806,8 +805,8 @@ func TestAccAWSLBListenerRule_conditionPathPattern(t *testing.T) {
 						"query_string.#":          "0",
 						"source_ip.#":             "0",
 					}),
-					tfawsresource.TestCheckTypeSetElemAttr(resourceName, "condition.*.path_pattern.0.values.*", "/cgi-bin/*"),
-					tfawsresource.TestCheckTypeSetElemAttr(resourceName, "condition.*.path_pattern.0.values.*", "/public/*"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "condition.*.path_pattern.0.values.*", "/cgi-bin/*"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "condition.*.path_pattern.0.values.*", "/public/*"),
 				),
 			},
 		},
@@ -835,7 +834,7 @@ func TestAccAWSLBListenerRule_conditionQueryString(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "priority", "100"),
 					resource.TestCheckResourceAttr(resourceName, "action.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "condition.#", "2"),
-					tfawsresource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
 						"host_header.#":         "0",
 						"http_header.#":         "0",
 						"http_request_method.#": "0",
@@ -843,18 +842,18 @@ func TestAccAWSLBListenerRule_conditionQueryString(t *testing.T) {
 						"query_string.#":        "2",
 						"source_ip.#":           "0",
 					}),
-					tfawsresource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*.query_string.*", map[string]string{
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*.query_string.*", map[string]string{
 						"key":   "",
 						"value": "surprise",
 					}),
-					tfawsresource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*.query_string.*", map[string]string{
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*.query_string.*", map[string]string{
 						"key":   "",
 						"value": "blank",
 					}),
 					// TODO: TypeSet check helpers cannot make distinction between the 2 set items
 					// because we had to write a new check for the "downstream" nested set
 					// a distinguishing attribute on the outer set would be solve this.
-					tfawsresource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
 						"host_header.#":         "0",
 						"http_header.#":         "0",
 						"http_request_method.#": "0",
@@ -862,11 +861,11 @@ func TestAccAWSLBListenerRule_conditionQueryString(t *testing.T) {
 						"query_string.#":        "2",
 						"source_ip.#":           "0",
 					}),
-					tfawsresource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*.query_string.*", map[string]string{
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*.query_string.*", map[string]string{
 						"key":   "foo",
 						"value": "baz",
 					}),
-					tfawsresource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*.query_string.*", map[string]string{
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*.query_string.*", map[string]string{
 						"key":   "foo",
 						"value": "bar",
 					}),
@@ -897,7 +896,7 @@ func TestAccAWSLBListenerRule_conditionSourceIp(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "priority", "100"),
 					resource.TestCheckResourceAttr(resourceName, "action.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "condition.#", "1"),
-					tfawsresource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
 						"host_header.#":         "0",
 						"http_header.#":         "0",
 						"http_request_method.#": "0",
@@ -906,8 +905,8 @@ func TestAccAWSLBListenerRule_conditionSourceIp(t *testing.T) {
 						"source_ip.#":           "1",
 						"source_ip.0.values.#":  "2",
 					}),
-					tfawsresource.TestCheckTypeSetElemAttr(resourceName, "condition.*.source_ip.0.values.*", "dead:cafe::/64"),
-					tfawsresource.TestCheckTypeSetElemAttr(resourceName, "condition.*.source_ip.0.values.*", "192.168.0.0/16"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "condition.*.source_ip.0.values.*", "dead:cafe::/64"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "condition.*.source_ip.0.values.*", "192.168.0.0/16"),
 				),
 			},
 		},
@@ -934,15 +933,15 @@ func TestAccAWSLBListenerRule_conditionUpdateMixed(t *testing.T) {
 					resource.TestCheckResourceAttrPair(resourceName, "listener_arn", frontEndListenerResourceName, "arn"),
 					resource.TestCheckResourceAttr(resourceName, "action.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "condition.#", "2"),
-					tfawsresource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
 						"path_pattern.#":          "1",
 						"path_pattern.0.values.#": "1",
 					}),
-					tfawsresource.TestCheckTypeSetElemAttr(resourceName, "condition.*.path_pattern.0.values.*", "/public/*"),
-					tfawsresource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
+					resource.TestCheckTypeSetElemAttr(resourceName, "condition.*.path_pattern.0.values.*", "/public/*"),
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
 						"source_ip.0.values.#": "1",
 					}),
-					tfawsresource.TestCheckTypeSetElemAttr(resourceName, "condition.*.source_ip.0.values.*", "192.168.0.0/16"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "condition.*.source_ip.0.values.*", "192.168.0.0/16"),
 				),
 			},
 			{
@@ -953,15 +952,15 @@ func TestAccAWSLBListenerRule_conditionUpdateMixed(t *testing.T) {
 					resource.TestCheckResourceAttrPair(resourceName, "listener_arn", frontEndListenerResourceName, "arn"),
 					resource.TestCheckResourceAttr(resourceName, "action.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "condition.#", "2"),
-					tfawsresource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
 						"path_pattern.#":          "1",
 						"path_pattern.0.values.#": "1",
 					}),
-					tfawsresource.TestCheckTypeSetElemAttr(resourceName, "condition.*.path_pattern.0.values.*", "/public/*"),
-					tfawsresource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
+					resource.TestCheckTypeSetElemAttr(resourceName, "condition.*.path_pattern.0.values.*", "/public/*"),
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
 						"source_ip.0.values.#": "1",
 					}),
-					tfawsresource.TestCheckTypeSetElemAttr(resourceName, "condition.*.source_ip.0.values.*", "dead:cafe::/64"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "condition.*.source_ip.0.values.*", "dead:cafe::/64"),
 				),
 			},
 			{
@@ -972,15 +971,15 @@ func TestAccAWSLBListenerRule_conditionUpdateMixed(t *testing.T) {
 					resource.TestCheckResourceAttrPair(resourceName, "listener_arn", frontEndListenerResourceName, "arn"),
 					resource.TestCheckResourceAttr(resourceName, "action.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "condition.#", "2"),
-					tfawsresource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
 						"path_pattern.#":          "1",
 						"path_pattern.0.values.#": "1",
 					}),
-					tfawsresource.TestCheckTypeSetElemAttr(resourceName, "condition.*.path_pattern.0.values.*", "/cgi-bin/*"),
-					tfawsresource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
+					resource.TestCheckTypeSetElemAttr(resourceName, "condition.*.path_pattern.0.values.*", "/cgi-bin/*"),
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
 						"source_ip.0.values.#": "1",
 					}),
-					tfawsresource.TestCheckTypeSetElemAttr(resourceName, "condition.*.source_ip.0.values.*", "dead:cafe::/64"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "condition.*.source_ip.0.values.*", "dead:cafe::/64"),
 				),
 			},
 		},
@@ -1008,7 +1007,7 @@ func TestAccAWSLBListenerRule_conditionMultiple(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "priority", "100"),
 					resource.TestCheckResourceAttr(resourceName, "action.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "condition.#", "5"),
-					tfawsresource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
 						"host_header.#":                  "0",
 						"http_header.#":                  "1",
 						"http_header.0.http_header_name": "X-Forwarded-For",
@@ -1018,9 +1017,9 @@ func TestAccAWSLBListenerRule_conditionMultiple(t *testing.T) {
 						"query_string.#":                 "0",
 						"source_ip.#":                    "0",
 					}),
-					tfawsresource.TestCheckTypeSetElemAttr(resourceName, "condition.*.http_header.0.values.*", "192.168.1.*"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "condition.*.http_header.0.values.*", "192.168.1.*"),
 
-					tfawsresource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
 						"host_header.#":         "0",
 						"http_header.#":         "0",
 						"http_request_method.#": "0",
@@ -1029,9 +1028,9 @@ func TestAccAWSLBListenerRule_conditionMultiple(t *testing.T) {
 						"source_ip.#":           "1",
 						"source_ip.0.values.#":  "1",
 					}),
-					tfawsresource.TestCheckTypeSetElemAttr(resourceName, "condition.*.source_ip.0.values.*", "192.168.0.0/16"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "condition.*.source_ip.0.values.*", "192.168.0.0/16"),
 
-					tfawsresource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
 						"host_header.#":                  "0",
 						"http_header.#":                  "0",
 						"http_request_method.#":          "1",
@@ -1040,9 +1039,9 @@ func TestAccAWSLBListenerRule_conditionMultiple(t *testing.T) {
 						"query_string.#":                 "0",
 						"source_ip.#":                    "0",
 					}),
-					tfawsresource.TestCheckTypeSetElemAttr(resourceName, "condition.*.http_request_method.0.values.*", "GET"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "condition.*.http_request_method.0.values.*", "GET"),
 
-					tfawsresource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
 						"host_header.#":           "0",
 						"http_header.#":           "0",
 						"http_request_method.#":   "0",
@@ -1051,9 +1050,9 @@ func TestAccAWSLBListenerRule_conditionMultiple(t *testing.T) {
 						"query_string.#":          "0",
 						"source_ip.#":             "0",
 					}),
-					tfawsresource.TestCheckTypeSetElemAttr(resourceName, "condition.*.path_pattern.0.values.*", "/public/*"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "condition.*.path_pattern.0.values.*", "/public/*"),
 
-					tfawsresource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
 						"host_header.#":          "1",
 						"host_header.0.values.#": "1",
 						"http_header.#":          "0",
@@ -1062,7 +1061,7 @@ func TestAccAWSLBListenerRule_conditionMultiple(t *testing.T) {
 						"query_string.#":         "0",
 						"source_ip.#":            "0",
 					}),
-					tfawsresource.TestCheckTypeSetElemAttr(resourceName, "condition.*.host_header.0.values.*", "example.com"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "condition.*.host_header.0.values.*", "example.com"),
 				),
 			},
 		},
@@ -1089,36 +1088,36 @@ func TestAccAWSLBListenerRule_conditionUpdateMultiple(t *testing.T) {
 					resource.TestCheckResourceAttrPair(resourceName, "listener_arn", frontEndListenerResourceName, "arn"),
 					resource.TestCheckResourceAttr(resourceName, "action.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "condition.#", "5"),
-					tfawsresource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
 						"http_header.#":                  "1",
 						"http_header.0.http_header_name": "X-Forwarded-For",
 						"http_header.0.values.#":         "1",
 					}),
-					tfawsresource.TestCheckTypeSetElemAttr(resourceName, "condition.*.http_header.0.values.*", "192.168.1.*"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "condition.*.http_header.0.values.*", "192.168.1.*"),
 
-					tfawsresource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
 						"source_ip.#":          "1",
 						"source_ip.0.values.#": "1",
 					}),
-					tfawsresource.TestCheckTypeSetElemAttr(resourceName, "condition.*.source_ip.0.values.*", "192.168.0.0/16"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "condition.*.source_ip.0.values.*", "192.168.0.0/16"),
 
-					tfawsresource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
 						"http_request_method.#":          "1",
 						"http_request_method.0.values.#": "1",
 					}),
-					tfawsresource.TestCheckTypeSetElemAttr(resourceName, "condition.*.http_request_method.0.values.*", "GET"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "condition.*.http_request_method.0.values.*", "GET"),
 
-					tfawsresource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
 						"path_pattern.#":          "1",
 						"path_pattern.0.values.#": "1",
 					}),
-					tfawsresource.TestCheckTypeSetElemAttr(resourceName, "condition.*.path_pattern.0.values.*", "/public/*"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "condition.*.path_pattern.0.values.*", "/public/*"),
 
-					tfawsresource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
 						"host_header.#":          "1",
 						"host_header.0.values.#": "1",
 					}),
-					tfawsresource.TestCheckTypeSetElemAttr(resourceName, "condition.*.host_header.0.values.*", "example.com"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "condition.*.host_header.0.values.*", "example.com"),
 				),
 			},
 			{
@@ -1129,36 +1128,36 @@ func TestAccAWSLBListenerRule_conditionUpdateMultiple(t *testing.T) {
 					resource.TestCheckResourceAttrPair(resourceName, "listener_arn", frontEndListenerResourceName, "arn"),
 					resource.TestCheckResourceAttr(resourceName, "action.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "condition.#", "5"),
-					tfawsresource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
 						"http_header.#":                  "1",
 						"http_header.0.http_header_name": "X-Forwarded-For",
 						"http_header.0.values.#":         "1",
 					}),
-					tfawsresource.TestCheckTypeSetElemAttr(resourceName, "condition.*.http_header.0.values.*", "192.168.2.*"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "condition.*.http_header.0.values.*", "192.168.2.*"),
 
-					tfawsresource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
 						"source_ip.#":          "1",
 						"source_ip.0.values.#": "1",
 					}),
-					tfawsresource.TestCheckTypeSetElemAttr(resourceName, "condition.*.source_ip.0.values.*", "192.168.0.0/24"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "condition.*.source_ip.0.values.*", "192.168.0.0/24"),
 
-					tfawsresource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
 						"http_request_method.#":          "1",
 						"http_request_method.0.values.#": "1",
 					}),
-					tfawsresource.TestCheckTypeSetElemAttr(resourceName, "condition.*.http_request_method.0.values.*", "POST"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "condition.*.http_request_method.0.values.*", "POST"),
 
-					tfawsresource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
 						"path_pattern.#":          "1",
 						"path_pattern.0.values.#": "1",
 					}),
-					tfawsresource.TestCheckTypeSetElemAttr(resourceName, "condition.*.path_pattern.0.values.*", "/public/2/*"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "condition.*.path_pattern.0.values.*", "/public/2/*"),
 
-					tfawsresource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "condition.*", map[string]string{
 						"host_header.#":          "1",
 						"host_header.0.values.#": "1",
 					}),
-					tfawsresource.TestCheckTypeSetElemAttr(resourceName, "condition.*.host_header.0.values.*", "foobar.com"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "condition.*.host_header.0.values.*", "foobar.com"),
 				),
 			},
 		},
@@ -1327,7 +1326,7 @@ resource "aws_lb_target_group" "test" {
 
 variable "subnets" {
   default = ["10.0.1.0/24", "10.0.2.0/24"]
-  type    = "list"
+  type    = list(string)
 }
 
 data "aws_availability_zones" "available" {
@@ -1477,7 +1476,7 @@ resource "aws_lb_target_group" "test2" {
 
 variable "subnets" {
   default = ["10.0.1.0/24", "10.0.2.0/24"]
-  type    = "list"
+  type    = list(string)
 }
 
 data "aws_availability_zones" "available" {
@@ -1632,7 +1631,7 @@ resource "aws_lb_target_group" "test2" {
 
 variable "subnets" {
   default = ["10.0.1.0/24", "10.0.2.0/24"]
-  type    = "list"
+  type    = list(string)
 }
 
 data "aws_availability_zones" "available" {
@@ -1771,7 +1770,7 @@ resource "aws_lb_target_group" "test2" {
 
 variable "subnets" {
   default = ["10.0.1.0/24", "10.0.2.0/24"]
-  type    = "list"
+  type    = list(string)
 }
 
 data "aws_availability_zones" "available" {
@@ -1892,7 +1891,7 @@ resource "aws_alb_target_group" "test" {
 
 variable "subnets" {
   default = ["10.0.1.0/24", "10.0.2.0/24"]
-  type    = "list"
+  type    = list(string)
 }
 
 data "aws_availability_zones" "available" {
@@ -2005,7 +2004,7 @@ resource "aws_lb" "alb_test" {
 
 variable "subnets" {
   default = ["10.0.1.0/24", "10.0.2.0/24"]
-  type    = "list"
+  type    = list(string)
 }
 
 data "aws_availability_zones" "available" {
@@ -2118,7 +2117,7 @@ resource "aws_lb" "alb_test" {
 
 variable "subnets" {
   default = ["10.0.1.0/24", "10.0.2.0/24"]
-  type    = "list"
+  type    = list(string)
 }
 
 data "aws_availability_zones" "available" {
@@ -2239,7 +2238,7 @@ resource "aws_lb_target_group" "test" {
 
 variable "subnets" {
   default = ["10.0.1.0/24", "10.0.2.0/24"]
-  type    = "list"
+  type    = list(string)
 }
 
 data "aws_availability_zones" "available" {
@@ -2371,7 +2370,7 @@ resource "aws_lb_target_group" "test" {
 
 variable "subnets" {
   default = ["10.0.1.0/24", "10.0.2.0/24"]
-  type    = "list"
+  type    = list(string)
 }
 
 data "aws_availability_zones" "available" {
@@ -2476,7 +2475,7 @@ resource "aws_lb_target_group" "test" {
 
 variable "subnets" {
   default = ["10.0.1.0/24", "10.0.2.0/24"]
-  type    = "list"
+  type    = list(string)
 }
 
 data "aws_availability_zones" "available" {
@@ -2535,7 +2534,7 @@ resource "aws_security_group" "alb_test" {
 }
 
 func testAccAWSLBListenerRuleConfig_priorityFirst(lbName, targetGroupName string) string {
-	return testAccAWSLBListenerRuleConfig_priorityBase(lbName, targetGroupName) + `
+	return composeConfig(testAccAWSLBListenerRuleConfig_priorityBase(lbName, targetGroupName), `
 resource "aws_lb_listener_rule" "first" {
   listener_arn = aws_lb_listener.front_end.arn
 
@@ -2568,11 +2567,11 @@ resource "aws_lb_listener_rule" "third" {
 
   depends_on = [aws_lb_listener_rule.first]
 }
-`
+`)
 }
 
 func testAccAWSLBListenerRuleConfig_priorityLast(lbName, targetGroupName string) string {
-	return testAccAWSLBListenerRuleConfig_priorityFirst(lbName, targetGroupName) + `
+	return composeConfig(testAccAWSLBListenerRuleConfig_priorityFirst(lbName, targetGroupName), `
 resource "aws_lb_listener_rule" "last" {
   listener_arn = aws_lb_listener.front_end.arn
 
@@ -2587,11 +2586,11 @@ resource "aws_lb_listener_rule" "last" {
     }
   }
 }
-`
+`)
 }
 
 func testAccAWSLBListenerRuleConfig_priorityStatic(lbName, targetGroupName string) string {
-	return testAccAWSLBListenerRuleConfig_priorityFirst(lbName, targetGroupName) + `
+	return composeConfig(testAccAWSLBListenerRuleConfig_priorityFirst(lbName, targetGroupName), `
 resource "aws_lb_listener_rule" "last" {
   listener_arn = aws_lb_listener.front_end.arn
   priority     = 7
@@ -2607,11 +2606,11 @@ resource "aws_lb_listener_rule" "last" {
     }
   }
 }
-`
+`)
 }
 
 func testAccAWSLBListenerRuleConfig_priorityParallelism(lbName, targetGroupName string) string {
-	return testAccAWSLBListenerRuleConfig_priorityStatic(lbName, targetGroupName) + `
+	return composeConfig(testAccAWSLBListenerRuleConfig_priorityStatic(lbName, targetGroupName), `
 resource "aws_lb_listener_rule" "parallelism" {
   count = 10
 
@@ -2628,11 +2627,11 @@ resource "aws_lb_listener_rule" "parallelism" {
     }
   }
 }
-`
+`)
 }
 
 func testAccAWSLBListenerRuleConfig_priority50000(lbName, targetGroupName string) string {
-	return testAccAWSLBListenerRuleConfig_priorityBase(lbName, targetGroupName) + `
+	return composeConfig(testAccAWSLBListenerRuleConfig_priorityBase(lbName, targetGroupName), `
 resource "aws_lb_listener_rule" "priority50000" {
   listener_arn = aws_lb_listener.front_end.arn
   priority     = 50000
@@ -2648,12 +2647,12 @@ resource "aws_lb_listener_rule" "priority50000" {
     }
   }
 }
-`
+`)
 }
 
 // priority out of range (1, 50000)
 func testAccAWSLBListenerRuleConfig_priority50001(lbName, targetGroupName string) string {
-	return testAccAWSLBListenerRuleConfig_priority50000(lbName, targetGroupName) + `
+	return composeConfig(testAccAWSLBListenerRuleConfig_priority50000(lbName, targetGroupName), `
 resource "aws_lb_listener_rule" "priority50001" {
   listener_arn = aws_lb_listener.front_end.arn
 
@@ -2668,11 +2667,11 @@ resource "aws_lb_listener_rule" "priority50001" {
     }
   }
 }
-`
+`)
 }
 
 func testAccAWSLBListenerRuleConfig_priorityInUse(lbName, targetGroupName string) string {
-	return testAccAWSLBListenerRuleConfig_priority50000(lbName, targetGroupName) + `
+	return composeConfig(testAccAWSLBListenerRuleConfig_priority50000(lbName, targetGroupName), `
 resource "aws_lb_listener_rule" "priority50000_in_use" {
   listener_arn = aws_lb_listener.front_end.arn
   priority     = 50000
@@ -2688,7 +2687,7 @@ resource "aws_lb_listener_rule" "priority50000_in_use" {
     }
   }
 }
-`
+`)
 }
 
 func testAccAWSLBListenerRuleConfig_cognito(rName, key, certificate string) string {
@@ -2776,7 +2775,7 @@ resource "aws_lb_target_group" "test" {
 
 variable "subnets" {
   default = ["10.0.1.0/24", "10.0.2.0/24"]
-  type    = "list"
+  type    = list(string)
 }
 
 data "aws_availability_zones" "available" {
@@ -2943,7 +2942,7 @@ resource "aws_lb_target_group" "test" {
 
 variable "subnets" {
   default = ["10.0.1.0/24", "10.0.2.0/24"]
-  type    = "list"
+  type    = list(string)
 }
 
 data "aws_availability_zones" "available" {
@@ -3288,7 +3287,7 @@ resource "aws_lb" "alb_test" {
 
 variable "subnets" {
   default = ["10.0.1.0/24", "10.0.2.0/24"]
-  type    = "list"
+  type    = list(string)
 }
 
 data "aws_availability_zones" "available" {

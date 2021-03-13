@@ -23,9 +23,15 @@ import (
 )
 
 const (
-	awsAccountIDRegexpPattern = `^(aws|\d{12})$`
-	awsPartitionRegexpPattern = `^aws(-[a-z]+)*$`
-	awsRegionRegexpPattern    = `^[a-z]{2}(-[a-z]+)+-\d$`
+	awsAccountIDRegexpInternalPattern = `(aws|\d{12})`
+	awsPartitionRegexpInternalPattern = `aws(-[a-z]+)*`
+	awsRegionRegexpInternalPattern    = `[a-z]{2}(-[a-z]+)+-\d`
+)
+
+const (
+	awsAccountIDRegexpPattern = "^" + awsAccountIDRegexpInternalPattern + "$"
+	awsPartitionRegexpPattern = "^" + awsPartitionRegexpInternalPattern + "$"
+	awsRegionRegexpPattern    = "^" + awsRegionRegexpInternalPattern + "$"
 )
 
 var awsAccountIDRegexp = regexp.MustCompile(awsAccountIDRegexpPattern)
@@ -91,8 +97,8 @@ func validateTransferServerID(v interface{}, k string) (ws []string, errors []er
 func validateTransferUserName(v interface{}, k string) (ws []string, errors []error) {
 	value := v.(string)
 	// https://docs.aws.amazon.com/transfer/latest/userguide/API_CreateUser.html
-	if !regexp.MustCompile(`^[a-zA-Z0-9_][a-zA-Z0-9_-]{2,31}$`).MatchString(value) {
-		errors = append(errors, fmt.Errorf("Invalid %q: must be between 3 and 32 alphanumeric or special characters hyphen and underscore. However, %q cannot begin with a hyphen", k, k))
+	if !regexp.MustCompile(`^[\w][\w@.-]{2,99}$`).MatchString(value) {
+		errors = append(errors, fmt.Errorf("Invalid %q: must be between 3 and 100 alphanumeric characters, special characters, hyphens, or underscores. However, it cannot begin with a hyphen, period, or at sign", k))
 	}
 	return
 }
@@ -654,6 +660,25 @@ func validateAwsAccountId(v interface{}, k string) (ws []string, errors []error)
 	return
 }
 
+func validatePrincipal(v interface{}, k string) (ws []string, errors []error) {
+	value := v.(string)
+
+	if value == "IAM_ALLOWED_PRINCIPALS" {
+		return ws, errors
+	}
+
+	wsARN, errorsARN := validateArn(v, k)
+	ws = append(ws, wsARN...)
+	errors = append(errors, errorsARN...)
+
+	pattern := `\d{12}:(role|user)/`
+	if !regexp.MustCompile(pattern).MatchString(value) {
+		errors = append(errors, fmt.Errorf("%q doesn't look like a user or role: %q", k, value))
+	}
+
+	return ws, errors
+}
+
 func validateArn(v interface{}, k string) (ws []string, errors []error) {
 	value := v.(string)
 
@@ -1077,6 +1102,18 @@ func validateOnceADayWindowFormat(v interface{}, k string) (ws []string, errors 
 	if !regexp.MustCompile(validTimeFormatConsolidated).MatchString(value) {
 		errors = append(errors, fmt.Errorf(
 			"%q must satisfy the format of \"hh24:mi-hh24:mi\".", k))
+	}
+	return
+}
+
+// validateUTCTimestamp validates a string in UTC Format required by APIs including:
+// https://docs.aws.amazon.com/iot/latest/apireference/API_CloudwatchMetricAction.html
+// https://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_RestoreDBInstanceToPointInTime.html
+func validateUTCTimestamp(v interface{}, k string) (ws []string, errors []error) {
+	value := v.(string)
+	_, err := time.Parse(time.RFC3339, value)
+	if err != nil {
+		errors = append(errors, fmt.Errorf("%q must be in RFC3339 time format %q. Example: %s", k, time.RFC3339, err))
 	}
 	return
 }
@@ -1812,22 +1849,6 @@ func validateCognitoUserPoolSchemaName(v interface{}, k string) (ws []string, es
 	return
 }
 
-func validateCognitoUserPoolClientURL(v interface{}, k string) (ws []string, es []error) {
-	value := v.(string)
-	if len(value) < 1 {
-		es = append(es, fmt.Errorf("%q cannot be less than 1 character", k))
-	}
-
-	if len(value) > 1024 {
-		es = append(es, fmt.Errorf("%q cannot be longer than 1024 character", k))
-	}
-
-	if !regexp.MustCompile(`[\p{L}\p{M}\p{S}\p{N}\p{P}]+`).MatchString(value) {
-		es = append(es, fmt.Errorf(`%q must satisfy regular expression pattern: [\p{L}\p{M}\p{S}\p{N}\p{P}]+`, k))
-	}
-	return
-}
-
 func validateCognitoResourceServerScopeName(v interface{}, k string) (ws []string, errors []error) {
 	value := v.(string)
 
@@ -1872,19 +1893,6 @@ func validateAwsSSMName(v interface{}, k string) (ws []string, errors []error) {
 	if !regexp.MustCompile(`^[a-zA-Z0-9_\-.]{3,128}$`).MatchString(value) {
 		errors = append(errors, fmt.Errorf(
 			`Only alphanumeric characters, hyphens, dots & underscores allowed in %q: %q (Must satisfy regular expression pattern: ^[a-zA-Z0-9_\-.]{3,128}$)`,
-			k, value))
-	}
-
-	return
-}
-
-func validateAwsSSMMaintenanceWindowTaskName(v interface{}, k string) (ws []string, errors []error) {
-	// https://docs.aws.amazon.com/systems-manager/latest/APIReference/API_RegisterTaskWithMaintenanceWindow.html#systemsmanager-RegisterTaskWithMaintenanceWindow-request-Name
-	value := v.(string)
-
-	if !regexp.MustCompile(`^[a-zA-Z0-9_\-.]{3,128}$`).MatchString(value) {
-		errors = append(errors, fmt.Errorf(
-			"Only alphanumeric characters, hyphens, dots & underscores allowed in %q: %q (Must satisfy regular expression pattern: ^[a-zA-Z0-9_\\-.]{3,128}$)",
 			k, value))
 	}
 
@@ -1954,16 +1962,6 @@ func validateIoTTopicRuleCloudWatchAlarmStateValue(v interface{}, s string) ([]s
 	}
 
 	return nil, []error{fmt.Errorf("State must be one of OK, ALARM, or INSUFFICIENT_DATA")}
-}
-
-func validateIoTTopicRuleCloudWatchMetricTimestamp(v interface{}, s string) ([]string, []error) {
-	dateString := v.(string)
-
-	// https://docs.aws.amazon.com/iot/latest/apireference/API_CloudwatchMetricAction.html
-	if _, err := time.Parse(time.RFC3339, dateString); err != nil {
-		return nil, []error{err}
-	}
-	return nil, nil
 }
 
 func validateIoTTopicRuleElasticSearchEndpoint(v interface{}, k string) (ws []string, errors []error) {
@@ -2137,6 +2135,15 @@ func validate4ByteAsn(v interface{}, k string) (ws []string, errors []error) {
 	return
 }
 
+func validateLinuxFileMode(v interface{}, k string) (ws []string, errors []error) {
+	value := v.(string)
+	if !regexp.MustCompile(`^[0-7]{4}$`).MatchString(value) {
+		errors = append(errors, fmt.Errorf(
+			"only valid linux mode is allowed in %q", k))
+	}
+	return
+}
+
 func validateIotThingTypeName(v interface{}, k string) (ws []string, errors []error) {
 	value := v.(string)
 	if !regexp.MustCompile(`[a-zA-Z0-9:_-]+`).MatchString(value) {
@@ -2170,56 +2177,6 @@ func validateIotThingTypeSearchableAttribute(v interface{}, k string) (ws []stri
 			"only alphanumeric characters, underscores, dots, commas, arobases, slashes, colons, hashes and hyphens allowed in %q", k))
 	}
 	return
-}
-
-func validateDynamoDbTableAttributes(d *schema.ResourceDiff) error {
-	// Collect all indexed attributes
-	primaryHashKey := d.Get("hash_key").(string)
-	indexedAttributes := map[string]bool{
-		primaryHashKey: true,
-	}
-	if v, ok := d.GetOk("range_key"); ok {
-		indexedAttributes[v.(string)] = true
-	}
-	if v, ok := d.GetOk("local_secondary_index"); ok {
-		indexes := v.(*schema.Set).List()
-		for _, idx := range indexes {
-			index := idx.(map[string]interface{})
-			rangeKey := index["range_key"].(string)
-			indexedAttributes[rangeKey] = true
-		}
-	}
-	if v, ok := d.GetOk("global_secondary_index"); ok {
-		indexes := v.(*schema.Set).List()
-		for _, idx := range indexes {
-			index := idx.(map[string]interface{})
-
-			hashKey := index["hash_key"].(string)
-			indexedAttributes[hashKey] = true
-
-			if rk, ok := index["range_key"]; ok {
-				indexedAttributes[rk.(string)] = true
-			}
-		}
-	}
-
-	// Check if all indexed attributes have an attribute definition
-	attributes := d.Get("attribute").(*schema.Set).List()
-	missingAttrDefs := []string{}
-	for _, attr := range attributes {
-		attribute := attr.(map[string]interface{})
-		attrName := attribute["name"].(string)
-
-		if _, ok := indexedAttributes[attrName]; !ok {
-			missingAttrDefs = append(missingAttrDefs, attrName)
-		}
-	}
-
-	if len(missingAttrDefs) > 0 {
-		return fmt.Errorf("All attributes must be indexed. Unused attributes: %q", missingAttrDefs)
-	}
-
-	return nil
 }
 
 func validateLaunchTemplateName(v interface{}, k string) (ws []string, errors []error) {
@@ -2465,6 +2422,11 @@ var validateCloudWatchEventBusName = validation.All(
 	validation.StringMatch(regexp.MustCompile(`^[a-zA-Z0-9._\-]+$`), ""),
 )
 
+var validateCloudWatchEventArchiveName = validation.All(
+	validation.StringLenBetween(1, 48),
+	validation.StringMatch(regexp.MustCompile(`^[\.\-_A-Za-z0-9]+`), ""),
+)
+
 var validateServiceDiscoveryNamespaceName = validation.All(
 	validation.StringLenBetween(1, 1024),
 	validation.StringMatch(regexp.MustCompile(`^[0-9A-Za-z._-]+$`), ""),
@@ -2522,3 +2484,8 @@ func MapKeysDoNotMatch(r *regexp.Regexp, message string) schema.SchemaValidateFu
 		return warnings, errors
 	}
 }
+
+var validateTypeStringIsDateOrPositiveInt = validation.Any(
+	validation.IsRFC3339Time,
+	validation.StringMatch(regexp.MustCompile(`^\d+$`), "must be a positive integer value"),
+)
