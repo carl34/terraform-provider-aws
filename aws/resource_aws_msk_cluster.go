@@ -1000,6 +1000,7 @@ func flattenMskNodeInfoListBrokerIpAddresses(l *kafka.ListNodesOutput) *schema.S
 	}
 
 	return schema.NewSet(schema.HashString, ips)
+}
 
 func flattenMskSasl(sasl *kafka.Sasl) []map[string]interface{} {
 	if sasl == nil {
@@ -1019,7 +1020,6 @@ func flattenMskScram(scram *kafka.Scram) bool {
 	}
 
 	return aws.BoolValue(scram.Enabled)
-
 }
 
 func flattenMskTls(tls *kafka.Tls) []map[string]interface{} {
